@@ -1,0 +1,11 @@
+.black-info{
+    height: 25rem;
+    position: relative;
+}
+.black-video{
+    position: relative;
+    height: 25rem;
+    width: 85%;
+    object-fit: cover;
+
+}

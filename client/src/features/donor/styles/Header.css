@@ -1,0 +1,7 @@
+.header-video {
+    width: 100vw;
+    height: 75vh;
+    object-fit: cover; /* Optional: Ensures the video covers the entire area without distortion */
+    display: block; /* Removes any extra space around the video */
+  }
+  
