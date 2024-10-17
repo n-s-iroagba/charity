@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AppRoutes from './routes/routes';
 
 
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
