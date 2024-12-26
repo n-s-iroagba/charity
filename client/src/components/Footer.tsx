@@ -9,11 +9,13 @@ const Footer: React.FC = () => {
       <div className="footer-content">
         {/* Left Section: Disclaimer Text */}
         <div className="footer-left">
-          <p>
-            This website is not part of the Facebook website or Facebook Inc. <br />
-            Additionally, this site is not endorsed by Facebook in any way. Facebook is a trademark of Facebook, Inc.
-          </p>
-        </div>
+  <p>
+    Your generosity brings hope and healing to those in need. Together, we can make a difference. <br />
+    This website operates independently and is not affiliated with or endorsed by any social media platform. 
+    All donations are directed toward our mission of providing essential support to affected communities.
+  </p>
+</div>
+
 
         {/* Right Section: Social Media Icons */}
         <div className="footer-right">

@@ -1,60 +1,42 @@
-
-import React from 'react'   
-
+import React from 'react'
 import foodtruck from '../assets/foodtruck.webp'
 import kitchen from '../assets/kitchen.webp'
-import AppealInformation from '../components/AppealInformation'
 import AppNavbar from '../components/AppNavbar'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import Information from '../components/Information'
 import WhoWeAre from '../components/WhoWeAre'
+import ViewFinanceButton from '../components/ViewFinanceButton'
+import DonationButton from '../components/DonationButton'
+import ViewDonorsButton from '../components/ViewDonorsButton'
 
 
 
 
 const Home = () =>{
+
     return (
         <div>
          <AppNavbar/>
          <Header/>
         <WhoWeAre/>
         <Information
-  title="Food Truck"
-  firstHeaderText="Feed a Life Food"
-  secondHeaderText="Truck"
-  text="The Hot Meals food truck reaches refugee camps and other locations where traditional kitchens are impractical, providing nourishment and hope.
+          title="Our Campaigns"
+          firstHeaderText="Food And"
+          secondHeaderText="Medical Aid"
+          text="We use your generous contributions to cater to the nutritional and medical needs of those affected by the war in Gaza. Your support brings hope and essential relief to vulnerable families during this critical time"
+          imgSrc={foodtruck}
+          right components={[<ViewFinanceButton/>,<DonationButton title={'Feed A Life'}/>]}/>
 
-This mobile kitchen exemplifies our dedication to innovation and adaptability, delivering warm meals to those in dire need.
-
-By swiftly responding to changing needs, we uplift spirits and foster dignity among displaced individuals."
-  imgSrc={foodtruck}
-  right
-/>
 <Information
-  title="Hot Meals Kitchen"
-  firstHeaderText="Feed a Life"
-  secondHeaderText="Kitchen"
-  text="Our Feed a Life Hot Meals project tirelessly prepares thousands of meals for those in need, providing not just sustenance but a lifeline of support.
-
-These efforts ensure no one goes hungry, offering warmth and hope year-round."
-  imgSrc={kitchen}
-/>
-<Information
-  title="Food Truck"
-  firstHeaderText="Feed a Life Food"
-  secondHeaderText="Truck"
-  text="The Hot Meals food truck reaches refugee camps and other locations where traditional kitchens are impractical, providing nourishment and hope.
-
-This mobile kitchen exemplifies our dedication to innovation and adaptability, delivering warm meals to those in dire need.
-
-By swiftly responding to changing needs, we uplift spirits and foster dignity among displaced individuals."
-  imgSrc={foodtruck}
-  right
-/>
-<AppealInformation/>
+          title="Our Donors"
+          firstHeaderText="The Reason We"
+          secondHeaderText="Are Able To Touch Lives"
+          text="Thank you for your unwavering support and generosity. We are deeply grateful for your commitment to making a difference. Together, we bring hope and relief to those in need."
+          imgSrc={kitchen}
+           components={[<DonationButton title={'Donate Now'}/>,<ViewDonorsButton/>]}/>
 <Footer/>
         </div>
     )
 }
-export default Home;
+export default Home

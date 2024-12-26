@@ -14,7 +14,7 @@ const App = () => {
         <Route path="/donate" element={<DonationForm />} />
         <Route path='/expenses' element ={<FinancialReportsPage />} />
         <Route path="/donors" element={<DonorPage />} />
-        <Route path="/further-inquiries" element={<InquiryForm />} /> 
+        <Route path="/subscription" element={<InquiryForm />} /> 
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>

@@ -1,25 +1,4 @@
-.black-info {
-    height: 25rem;
-    position: relative;
-    z-index: 1;
-  }
-  
-  /* Styling for the video container */
-  .overflow-video-container {
-    position: relative;
-    z-index: 1;
-  }
-  
-  /* Make the video overflow the background color on large screens */
-  .black-video {
-    height: 25rem;
-    width: 100%;
-    object-fit: cover;
-    position: relative;
-    z-index: 2;
-    transform: translateY(10%);
-  }
-  
+
   /* Ensure footer is under the image */
   .footer-container {
     padding: 20px;
@@ -30,6 +9,8 @@
     align-items: center;
     justify-content: center;
     z-index: 0;
+    border-top: 1px solid;
+    margin-top: 2rem;
   }
   
   /* Rest of your footer styles */
@@ -39,7 +20,6 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    margin-top: 25rem;
   }
   
   /* Left Section */

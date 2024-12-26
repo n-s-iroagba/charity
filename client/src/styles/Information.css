@@ -1,35 +1,79 @@
-.right{
+.right {
     background-color: yellow;
-    /* position: relative; */
-    height: rem;
-    padding-top: 5rem;
-    padding-bottom: 5rem;
-}
-.image-right{
-    position: relative;
-    left:-4rem;
-    width: 100%;
-    height: 100%;
-    object-fit: cover ;
-}
-.text-right{
-    padding-right: 5rem;
+    height: auto; /* Adjust height for responsive design */
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    overflow: hidden;
 }
 
-.left{
-    background-color: blue;
-    /* position: relative; */
-    height: 30rem;
-    padding-top: 5rem;
-    padding-bottom: 5rem;
-}
-.image-left{
+.image-right {
     position: relative;
-    right:-4rem;
+    left: -4rem;
     width: 100%;
     height: 100%;
-    object-fit: cover ;
+    object-fit: cover;
 }
-.text-left{
+
+.text-right {
+    padding-right: 5rem;
+    padding-left: 3rem;
+    overflow: hidden;
+}
+
+.left {
+    background-color: blue;
+    height: auto; /* Adjust height for responsive design */
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    overflow: hidden;
+}
+
+.image-left {
+    position: relative;
+    right: -4rem;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.text-left {
     padding-left: 5rem;
+    padding-right: 3rem;
+    overflow: hidden;
+}
+
+/* Medium screens (tablets) */
+@media (max-width: 768px) {
+    .text-right,
+    .text-left {
+        padding-right: 2rem;
+        padding-left: 2rem;
+    }
+
+    .right,
+    .left {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+}
+
+/* Small screens (phones) */
+@media (max-width: 576px) {
+    .text-right,
+    .text-left {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+
+    .right,
+    .left {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .image-right,
+    .image-left {
+        left: 0;
+        right: 0;
+    }
 }
