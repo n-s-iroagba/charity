@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Accordion, Button, Modal, Form } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoneyBill, faEnvelope, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Donor } from './types/Donor';
-import { deleteDonor, getAllDonors, payDonorPledge, sendDonorEmail } from '../service/donorService';
+import { deleteDonor, getAllDonors, payDonorPledge, sendDonorEmail, uploadMockDonations } from '../services/adminService';
+import { parseExcelFile } from '../utils/excelUtils';
+import { Donor } from '../types/Donor';
 
 const AdminDashboard: React.FC = () => {
   const [donorsList, setDonorsList] = useState<Donor[]>([]);
@@ -12,9 +11,10 @@ const AdminDashboard: React.FC = () => {
   const [selectedDonor, setSelectedDonor] = useState<Donor | null>(null);
   const [emailSubject, setEmailSubject] = useState<string>('');
   const [emailMessage, setEmailMessage] = useState<string>('');
-  const [paymentAmount, setPaymentAmount] = useState(0)
+  const [paymentAmount, setPaymentAmount] = useState(0);
   const [showDeleteDonorForm, setShowDeleteDonorForm] = useState(false);
-  const [adminCode, setAdminCode] = useState('')
+  const [adminCode, setAdminCode] = useState('');
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   // Fetch all donors when the component mounts
   useEffect(() => {
@@ -26,29 +26,27 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   const handleDeleteDonor = async (donorId: number) => {
-    await deleteDonor(donorId);
-    setDonorsList(donorsList.filter(donor => donor.id !== donorId));
+    if (adminCode === 'admin123') {  // Simple admin code check
+      await deleteDonor(donorId);
+      setDonorsList(donorsList.filter(donor => donor.id !== donorId));
+      setShowDeleteDonorForm(false);
+    } else {
+      alert('Invalid admin code!');
+    }
   };
 
   const handleSendMail = async () => {
     if (selectedDonor) {
-      await sendDonorEmail(selectedDonor.id, {
-        subject: emailSubject,
-        message: emailMessage,
-      });
+      await sendDonorEmail(selectedDonor.id, { subject: emailSubject, message: emailMessage });
       setShowMailForm(false);
     }
   };
 
-
   const handlePayPledge = async () => {
     if (selectedDonor) {
       await payDonorPledge(selectedDonor.id, paymentAmount);
-      // Update donor's payment info locally
-      setDonorsList(donorsList.map(donor => 
-        donor.id === selectedDonor.id 
-          ? { ...donor, paidAmount: donor.paidAmount + paymentAmount } 
-          : donor
+      setDonorsList(donorsList.map(donor =>
+        donor.id === selectedDonor.id ? { ...donor, paidAmount: donor.pledgedAmount + paymentAmount } : donor
       ));
       setShowPledgeForm(false);
     }
@@ -65,131 +63,113 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handlePledgeFormClose = () => setShowPledgeForm(false);
- 
+
+  // Handle file upload and parse the Excel file
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        const donations = await parseExcelFile(file);
+  
+        await uploadMockDonations(donations);  // Upload donations to the backend
+        setShowUploadModal(false);
+      } catch (error) {
+        alert('Error uploading file');
+      }
+    }
+  };
 
   return (
-    <div>
-      <h2>Admin Dashboard - Donors List</h2>
-      <Accordion>
-        {donorsList.map((donor) => (
+    <div className='d-flex flex-column align-items-center'>
+      <h2 className='my-5'>Admin Dashboard - Donors List</h2>
+      <Button variant="primary" onClick={() => setShowUploadModal(true)}>
+        Upload Batch Donations
+      </Button>
+      {/* Render Donors List */}
+      <Accordion className='mt-5'>
+        {donorsList.length ? donorsList.map((donor) => (
           <Accordion.Item eventKey={donor.id.toString()} key={donor.id}>
             <Accordion.Header>{donor.firstName} {donor.lastName}</Accordion.Header>
             <Accordion.Body>
               <p>Pledged Amount: ${donor.pledgedAmount}</p>
               <p>Paid Amount: ${donor.paidAmount}</p>
               <Button variant="success" onClick={() => openPayPledgeForm(donor)}>
-                <FontAwesomeIcon icon={faMoneyBill} /> Pay Pledge
+                Pay Pledge
               </Button>{' '}
               <Button variant="info" onClick={() => handleShowMailForm(donor)}>
-                <FontAwesomeIcon icon={faEnvelope} /> Send Mail
+                Send Mail
               </Button>{' '}
-              <Button variant="danger" onClick={() => handleDeleteDonor(donor.id)}>
-                <FontAwesomeIcon icon={faTrash} /> Delete
+              <Button variant="danger" onClick={() => setShowDeleteDonorForm(true)}>
+                Delete
               </Button>
             </Accordion.Body>
           </Accordion.Item>
-        ))}
+        )) : <h4>No Donors yet</h4>}
       </Accordion>
 
-
-      {/* Pay Pledge Modal */}
-      <Modal show={showPledgeForm} onHide={handlePledgeFormClose}>
+      {/* Upload Modal */}
+      <Modal show={showUploadModal} onHide={() => setShowUploadModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Pay Pledge for {selectedDonor?.firstName}</Modal.Title>
+          <Modal.Title>Upload Mock Donations</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group controlId="formPledgeAmount">
-              <Form.Label>Pledged Amount</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Enter amount to pay"
-                value={selectedDonor?.pledgedAmount}
-                onChange={(e)=>setPaymentAmount(+e.target.value)}
-              />
-            </Form.Group>
-          </Form>
+          <Form.Group controlId="donationFile">
+            <Form.Label>Excel File</Form.Label>
+            <Form.Control type="file" onChange={handleFileUpload} />
+          </Form.Group>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handlePledgeFormClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handlePayPledge}>
-            Pay
-          </Button>
-        </Modal.Footer>
       </Modal>
 
-      {/* Send Mail Modal */}
+      {/* Send Email Modal */}
       <Modal show={showMailForm} onHide={() => setShowMailForm(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Send Mail to {selectedDonor?.firstName}</Modal.Title>
+          <Modal.Title>Send Email to {selectedDonor?.firstName}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group controlId="formEmailSubject">
-              <Form.Label>Subject</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter email subject"
-                value={emailSubject}
-                onChange={(e) => setEmailSubject(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group controlId="formEmailBody">
-              <Form.Label>Message</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="Enter your message"
-                value={emailMessage}
-                onChange={(e) => setEmailMessage(e.target.value)}
-              />
-            </Form.Group>
-          </Form>
+          <Form.Group controlId="emailSubject">
+            <Form.Label>Subject</Form.Label>
+            <Form.Control type="text" value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} />
+          </Form.Group>
+          <Form.Group controlId="emailMessage">
+            <Form.Label>Message</Form.Label>
+            <Form.Control as="textarea" rows={4} value={emailMessage} onChange={(e) => setEmailMessage(e.target.value)} />
+          </Form.Group>
+          <Button variant="primary" onClick={handleSendMail}>Send</Button>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowMailForm(false)}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSendMail}>
-            Send
-          </Button>
-        </Modal.Footer>
+      </Modal>
+      
+      {/* Pledge Modal */}
+      <Modal show={showPledgeForm} onHide={handlePledgeFormClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Pay Pledge to {selectedDonor?.firstName}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="paymentAmount">
+            <Form.Label>Amount</Form.Label>
+            <Form.Control
+              type="number"
+              value={paymentAmount}
+              onChange={(e) => setPaymentAmount(Number(e.target.value))}
+            />
+          </Form.Group>
+          <Button variant="primary" onClick={handlePayPledge}>Pay</Button>
+        </Modal.Body>
       </Modal>
 
-      {/* Send Mail Modal */}
-
-      {selectedDonor&&
+      {/* Delete Donor Form */}
       <Modal show={showDeleteDonorForm} onHide={() => setShowDeleteDonorForm(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Delete Donor {selectedDonor?.firstName + '  '+selectedDonor?.lastName }</Modal.Title>
+          <Modal.Title>Delete Donor</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group controlId="formEmailSubject">
-              <Form.Label>Enter Admin Code</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Enter admin Code"
-                value={adminCode}
-                onChange={(e) => setAdminCode(e.target.value)}
-              />
-            </Form.Group>
-          </Form>
+          <Form.Group controlId="adminCode">
+            <Form.Label>Admin Code</Form.Label>
+            <Form.Control type="text" value={adminCode} onChange={(e) => setAdminCode(e.target.value)} />
+          </Form.Group>
+          <Button variant="danger" onClick={() => handleDeleteDonor(selectedDonor!.id)}>Delete</Button>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteDonorForm(false)}>
-            Close
-          </Button>
-          <Button variant="danger" onClick={()=>handleDeleteDonor(selectedDonor.id)}>
-            Delete
-          </Button>
-        </Modal.Footer>
       </Modal>
-}
     </div>
-
   );
 };
 

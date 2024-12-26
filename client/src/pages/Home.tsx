@@ -1,12 +1,16 @@
+
 import React from 'react'   
-import AppNavbar from '../features/donor/components/AppNavbar'
-import Header from '../features/donor/components/Header';
-import PrimeInformation from '../features/donor/components/PrimeInformation';
-import Information from '../features/donor/components/Information';
-import foodtruck from '../features/donor/assets/foodtruck.webp'
-import kitchen from '../features/donor/assets/kitchen.webp'
-import BlackInformation from '../features/donor/components/BlackInformation';
-import Footer from '../features/donor/components/Footer';
+
+import foodtruck from '../assets/foodtruck.webp'
+import kitchen from '../assets/kitchen.webp'
+import AppealInformation from '../components/AppealInformation'
+import AppNavbar from '../components/AppNavbar'
+import Footer from '../components/Footer'
+import Header from '../components/Header'
+import Information from '../components/Information'
+import WhoWeAre from '../components/WhoWeAre'
+
+
 
 
 const Home = () =>{
@@ -14,7 +18,7 @@ const Home = () =>{
         <div>
          <AppNavbar/>
          <Header/>
-        <PrimeInformation/>
+        <WhoWeAre/>
         <Information
   title="Food Truck"
   firstHeaderText="Feed a Life Food"
@@ -48,7 +52,7 @@ By swiftly responding to changing needs, we uplift spirits and foster dignity am
   imgSrc={foodtruck}
   right
 />
-<BlackInformation/>
+<AppealInformation/>
 <Footer/>
         </div>
     )

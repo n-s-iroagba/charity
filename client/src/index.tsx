@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import AppRoutes from './routes/routes';
+import App from './App';
+
 
 
 
@@ -12,7 +13,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <AppRoutes />
+    <App />
   </React.StrictMode>
 );
 
